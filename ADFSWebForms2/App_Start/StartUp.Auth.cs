@@ -6,6 +6,7 @@ using Owin;
 using System;
 using System.Configuration;
 using System.Linq;
+using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -23,6 +24,11 @@ namespace ADFSWebForms2
 
         public void ConfigureAuth(IAppBuilder app)
         {
+            //Needed to ignore CA root certificate errors when pulling metadata from AD FS
+            ServicePointManager
+            .ServerCertificateValidationCallback +=
+            (sender, cert, chain, sslPolicyErrors) => true;
+
             app.SetDefaultSignInAsAuthenticationType(CookieAuthenticationDefaults.AuthenticationType);
 
             app.UseCookieAuthentication(new CookieAuthenticationOptions());
