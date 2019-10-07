@@ -40,7 +40,7 @@
     </div>
 
 
-    <asp:Button ID="LoginBtn" runat="server" Text="Login" OnClick="LoginBtn_Click" />
+    <asp:Button ID="LogOutBtn" runat="server" Text="Log out" OnClick="LogoutBtn_Click" />
 
 
 </asp:Content>

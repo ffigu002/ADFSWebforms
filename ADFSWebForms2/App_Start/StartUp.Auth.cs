@@ -1,4 +1,5 @@
-﻿using Microsoft.Owin.Extensions;
+﻿using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using Microsoft.Owin.Extensions;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.OpenIdConnect;
@@ -18,6 +19,7 @@ namespace ADFSWebForms2
         // private static string aadInstance = EnsureTrailingSlash(ConfigurationManager.AppSettings["ida:AADInstance"]);
         // private static string tenantId = ConfigurationManager.AppSettings["ida:TenantId"];
         private static string metadataAddress = ConfigurationManager.AppSettings["ida:ADFSDiscoveryDoc"];
+        private static string redirectUri = ConfigurationManager.AppSettings["ida:RedirectUri"];
         private static string postLogoutRedirectUri = ConfigurationManager.AppSettings["ida:PostLogoutRedirectUri"];
 
         //string authority = aadInstance + tenantId;
@@ -40,7 +42,7 @@ namespace ADFSWebForms2
               //Authority = authority,
               MetadataAddress = metadataAddress,
               PostLogoutRedirectUri = postLogoutRedirectUri,
-              RedirectUri = postLogoutRedirectUri,
+              RedirectUri = redirectUri,
               Notifications = new OpenIdConnectAuthenticationNotifications()
               {
                   AuthenticationFailed = (context) =>
@@ -57,6 +59,18 @@ namespace ADFSWebForms2
                       foreach (var group in groups)
                       {
                           context.AuthenticationTicket.Identity.AddClaim(new Claim(ClaimTypes.Role, group.Value));
+                      }
+
+                      context.AuthenticationTicket.Identity.AddClaim(new Claim("id_token", context.ProtocolMessage.IdToken));
+
+                      return Task.FromResult(0);
+                  },
+                  RedirectToIdentityProvider = (context) =>
+                  {
+                      if (context.ProtocolMessage.RequestType == OpenIdConnectRequestType.Logout)
+                      {
+                          var idTokenHint = context.OwinContext.Authentication.User.FindFirst("id_token").Value;
+                          context.ProtocolMessage.IdTokenHint = idTokenHint;
                       }
                       return Task.FromResult(0);
                   }

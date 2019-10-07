@@ -22,9 +22,14 @@ namespace ADFSWebForms2
             }
         }
 
-        protected void LoginBtn_Click(object sender, EventArgs e)
+        protected void LogoutBtn_Click(object sender, EventArgs e)
         {
-            
+            HttpContext.Current.GetOwinContext().Authentication.SignOut(
+             CookieAuthenticationDefaults.AuthenticationType,
+                 OpenIdConnectAuthenticationDefaults.AuthenticationType
+
+            );
+
         }
     }
 }
