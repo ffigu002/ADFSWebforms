@@ -17,7 +17,7 @@ namespace ADFSWebForms2
             if (!Request.IsAuthenticated)
             {
                 HttpContext.Current.GetOwinContext().Authentication.Challenge(
-                    new AuthenticationProperties { RedirectUri = "https://localhost:44377/About" },
+                    new AuthenticationProperties { RedirectUri = "https://localhost:44300/About" },
                     OpenIdConnectAuthenticationDefaults.AuthenticationType);
             }
         }
